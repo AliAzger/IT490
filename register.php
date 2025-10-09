@@ -1,23 +1,25 @@
 <?php
-$servername = "172.25.28.168";
-$username =  "testUser"
-$password = "Jhmwty9810!"
-$dbname = "students"
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-$conn = new mysql($servername, $username, $password, $dbname);
+include 'database.php'; 
 
-if ($conn->connect_error){
-        die("connection failed: " . $conn->connect_error);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+    $stmt->bind_param("ss", $username, $password);
+
+    if ($stmt->execute()) {
+        header("Location: index.html");
+        exit();
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
 }
-$data = json_decode(file_get_contents("php://input"), true);
-$user = $data["username"];
-$user = $data["password"];
-
-$sql = "INSERT INTO users (username, password) VALUES ('$user', $pass')";
-if ($cnn ->query($sql) === TRUE){
-        echo json_encode(["status" => "success"]);
-} else {
-        echo json_encode(["status" => "error", "message" => $conn->error]);
-}
-$conn0->close();
 ?>
+
