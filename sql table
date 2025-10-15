@@ -4,3 +4,4 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
+  'session_key' varchar(255) UNIQUE;
