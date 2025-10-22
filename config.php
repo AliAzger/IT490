@@ -1,0 +1,3 @@
+<?php
+$TICKETMASTER_API_KEY = "6DDthLHkJEdh9JQ8GOw3Q8zngKyOqAPy";
+?>
