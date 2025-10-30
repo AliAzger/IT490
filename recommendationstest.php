@@ -48,18 +48,25 @@ $recommendations = $conn->query("
 if ($recommendations->num_rows > 0) {
     while ($event = $recommendations->fetch_assoc()) {
         echo "<div class='event'>";
-        echo "<h2>" . htmlspecialchars($event['name']) . "</h2>";
-        echo "<p><strong>Date:</strong> " . htmlspecialchars($event['date_time']) . "</p>";
-        echo "<p><strong>Venue:</strong> " . htmlspecialchars($event['venue']) . "</p>";
+        echo "<h2>" . ($event['name']) . "</h2>";
+        echo "<p><strong>Date:</strong> " . ($event['date_time']) . "</p>";
+        echo "<p><strong>Venue:</strong> " . ($event['venue']) . "</p>";
 
         echo "<div class='event-actions'>";
-        echo "<a class='view-btn' href='" . htmlspecialchars($event['url']) . "' target='_blank'>View Event</a>";
+        echo "<a class='view-btn' href='" . ($event['url']) . "' target='_blank'>View Event</a>";
 
+
+        
         // Add to watchlist checkbox
+        
         echo "<label style='margin-left:10px;'>";
-        echo "<input type='checkbox' name='save_events[]' value='" . htmlspecialchars($event['event_id']) . "'> Add to Watchlist";
+        echo "<input type='checkbox' name='save_events[]' value='" . ($event['event_id']) . "'> Add to Watchlist";
         echo "</label>";
 
+
+
+
+        
         echo "</div>";
         echo "</div>";
     }
