@@ -51,14 +51,14 @@ while ($user = $users->fetch_assoc()) {
             $mail->isHTML(true);
             $mail->Subject = 'Events Ending Soon in Your Watchlist';
 
-            $body = "<h3>Hi " . htmlspecialchars($full_name) . ",</h3>";
+            $body = "<h3>Hi " . ($full_name) . ",</h3>";
             $body .= "<p>The following events in your watchlist are ending soon:</p><ul>";
             foreach ($endingSoonEvents as $e) {
-                $body .= "<li><a href='" . htmlspecialchars($e['url']) . "'>" 
-                         . htmlspecialchars($e['event_name']) . "</a> — " 
-                         . htmlspecialchars($e['date_time']) . " at " 
-                         . htmlspecialchars($e['venue']) . ", " 
-                         . htmlspecialchars($e['city']) . "</li>";
+                $body .= "<li><a href='" . ($e['url']) . "'>" 
+                         . ($e['event_name']) . "</a> — " 
+                         . ($e['date_time']) . " at " 
+                         . ($e['venue']) . ", " 
+                         . ($e['city']) . "</li>";
             }
             $body .= "</ul><p>Check them out before it's too late!</p>";
 
