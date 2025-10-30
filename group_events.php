@@ -53,15 +53,53 @@ $watchlist = $conn->query("SELECT * FROM saved_events ORDER BY date_time ASC");
 	<meta charset="UTF-8">
 	<title>Group Events</title>
 <style>
-	body { font-family: Arial; margin: 20px; }
-	.event { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-	.event h2 { margin-top: 0; }
-	.event-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-	.view-btn { text-decoration: none; color: #007BFF; }
-	.view-btn:hover { color: #0056b3; }
-	input[type=submit] { padding: 5px 10px; border-radius: 4px; border: none; background-color: #28a745; color: white; cursor: pointer; margin-top: 10px; }
-	input[type=submit]:hover { background-color: #218838; }
-	form { margin-bottom: 30px; }
+	body { 
+		font-family: Arial; 
+		margin: 20px; 
+	}
+	.event { 
+		border: 1px solid #ccc; 
+		padding: 15px;
+		margin-bottom: 15px;
+		border-radius: 5px; 
+	}
+	.event h2 { 
+		margin-top: 0;
+	}
+	.event-actions { 
+		display: flex; 
+		align-items: center; 
+		gap: 8px; 
+		margin-top: 8px;
+	}
+	.view-btn { 
+		text-decoration: none; 
+		color: #007BFF;
+	}
+
+	
+	.view-btn:hover { 
+		color: #0056b3;
+	}
+	input[type=submit] { 
+		padding: 5px 10px; 
+		border-radius: 4px; 
+		border: none; 
+		background-color: #28a745; 
+		color: white; 
+		cursor: pointer; 
+		margin-top: 10px; 
+	}
+	input[type=submit]:hover { 
+		background-color: #218838;
+	}
+
+
+
+	
+	form {
+		margin-bottom: 30px;
+	}
 </style>
 	</head>
 <body>
