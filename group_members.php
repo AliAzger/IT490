@@ -39,7 +39,7 @@ if ($is_admin && isset($_POST['add_user'])) {
 
 if ($is_admin && isset($_POST['remove_user_id'])) {
     $remove_id = (int)$_POST['remove_user_id'];
-    if ($remove_id !== $user_id) { // prevent self-remove
+    if ($remove_id !== $user_id) { 
         $conn->query("DELETE FROM group_members WHERE group_id=$group_id AND user_id=$remove_id");
         echo "<p User removed.</p>";
     }
@@ -60,13 +60,36 @@ $members = $conn->query("
 	<meta charset="UTF-8">
 	<title>Manage Group Members</title>
 <style>
-	body { font-family: Arial; margin: 20px; }
-	.member { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
-	input[type=text] { padding: 5px; width: 200px; }
-	input[type=submit] { padding: 5px 10px; border: none; border-radius: 4px; background-color: #007BFF; color: white; cursor: pointer; }
-	input[type=submit]:hover { background-color: #0056b3; }
-	.remove-btn { background-color: #dc3545; }
-	.remove-btn:hover { background-color: #b02a37; }
+	body { 
+		font-family: Arial;
+		margin: 20px; 
+	}
+	.member { 
+		border: 1px solid #ccc; 
+			 padding: 10px; 
+		margin-bottom: 10px; 
+		border-radius: 5px; 
+	}
+	input[type=text] { 
+		padding: 5px; 
+		width: 200px; 
+	}
+	input[type=submit] { 
+		padding: 5px 10px; 
+		border: none; 
+		border-radius: 4px; 
+		background-color: #007BFF; 
+		color: white; 
+		cursor: pointer;
+	}
+	input[type=submit]:hover { 
+		background-color: #0056b3;
+	}
+	.remove-btn { 
+		background-color: #dc3545; }
+	.remove-btn:hover { 
+		background-color: #b02a37; 
+	}
 	</style>
 	</head>
 <body>
@@ -90,7 +113,7 @@ $members = $conn->query("
 if ($members->num_rows > 0) {
     while ($m = $members->fetch_assoc()) {
         echo "<div class='member'>";
-        echo "<strong>" . htmlspecialchars($m['username']) . "</strong> (" . $m['role'] . ")";
+        echo "<strong>" . ($m['username']) . "</strong> (" . $m['role'] . ")";
         if ($is_admin && $m['user_id'] != $user_id) {
             echo "<form method='post' style='display:inline; margin-left:10px;'>
                     <input type='hidden' name='remove_user_id' value='" . $m['user_id'] . "'>
