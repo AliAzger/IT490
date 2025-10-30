@@ -59,15 +59,41 @@ $attended = $conn->query("SELECT * FROM attended_events ORDER BY id DESC");
     <meta charset="UTF-8">
     <title>My Attended Events</title>
     <style>
-        body { font-family: Arial; margin: 20px; }
-        .event { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-        .event h2 { margin-top: 0; }
-        .event-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-        .view-btn { text-decoration: none; color: #007BFF; }
-        .view-btn:hover { color: #0056b3; }
-        .review-form { margin-top: 10px; }
-        .review-form textarea { width: 100%; height: 60px; }
-        .review-form select, .review-form input[type=submit] { margin-top: 5px; }
+        body { 
+            font-family: 
+                Arial; 
+            margin: 20px; 
+        }
+        .event { 
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px; 
+            border-radius: 5px;
+        }
+        .event h2 { 
+            margin-top: 0; 
+        }
+        .event-actions { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            margin-top: 8px; }
+        .view-btn {
+            text-decoration: none; 
+            color: #007BFF;
+        }
+        .view-btn:hover { 
+            color: #0056b3;
+        }
+        .review-form { 
+            margin-top: 10px; 
+        }
+        .review-form textarea { 
+            width: 100%; 
+            height: 60px; 
+        }
+        .review-form select, .review-form input[type=submit] {
+            margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -81,16 +107,16 @@ if ($attended->num_rows > 0) {
     while ($row = $attended->fetch_assoc()) {
         $event_id = $row['event_id'];
         echo "<div class='event'>";
-        echo "<h2>" . htmlspecialchars($row['event_name']) . "</h2>";
-        echo "<p><strong>Date:</strong> " . htmlspecialchars($row['date_time']) . "</p>";
-        echo "<p><strong>Venue:</strong> " . htmlspecialchars($row['venue']) . "</p>";
+        echo "<h2>" . ($row['event_name']) . "</h2>";
+        echo "<p><strong>Date:</strong> " . ($row['date_time']) . "</p>";
+        echo "<p><strong>Venue:</strong> " . ($row['venue']) . "</p>";
         echo "<div class='event-actions'>";
-        echo "<a class='view-btn' href='" . htmlspecialchars($row['url']) . "' target='_blank'>View Event</a>";
+        echo "<a class='view-btn' href='" . ($row['url']) . "' target='_blank'>View Event</a>";
         echo "</div>";
 
         // Review form
         echo "<form method='post' class='review-form'>";
-        echo "<input type='hidden' name='event_id' value='" . htmlspecialchars($event_id) . "'>";
+        echo "<input type='hidden' name='event_id' value='" . ($event_id) . "'>";
         echo "<label>Rating: <select name='rating'>";
         for ($i = 1; $i <= 5; $i++) {
             echo "<option value='$i'>$i Star" . ($i > 1 ? "s" : "") . "</option>";
@@ -104,7 +130,7 @@ if ($attended->num_rows > 0) {
         if ($reviews->num_rows > 0) {
             echo "<h4>Reviews:</h4>";
             while ($r = $reviews->fetch_assoc()) {
-                echo "<p>⭐ " . htmlspecialchars($r['rating']) . " - " . nl2br(htmlspecialchars($r['review'])) . "</p>";
+                echo "<p>⭐ " . ($r['rating']) . " - " . nl2br(($r['review'])) . "</p>";
             }
         }
 
