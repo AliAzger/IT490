@@ -72,12 +72,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Account</title>
     <style>
-        body { font-family: Arial; margin: 20px; }
-        form { max-width: 400px; margin: auto; }
-        label { display: block; margin-top: 10px; }
-        input[type="text"], input[type="email"] { width: 100%; padding: 8px; margin-top: 5px; }
-        input[type="submit"] { margin-top: 15px; padding: 8px 12px; cursor: pointer; }
-        .message { margin-top: 15px; color: green; text-align: center; }
+        body { 
+			font-family: Arial; 
+			margin: 20px; 
+		}
+        form { max-width: 400px; 
+			  margin: auto; 
+			 }
+        label { display: block; 
+			   margin-top: 10px; 
+			  }
+        input[type="text"], input[type="email"] { 
+			width: 100%; 
+			padding: 8px; 
+			margin-top: 5px; 
+		}
+        input[type="submit"] { 
+			margin-top: 15px; 
+			padding: 8px 12px; 
+			cursor: pointer; 
+		}
+        .message { 
+			margin-top: 15px; 
+			color: green; 
+			text-align: center; 
+		}
     </style>
 </head>
 <body>
