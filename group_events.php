@@ -18,7 +18,6 @@ if ($member_check->num_rows === 0) {
 $member_info = $member_check->fetch_assoc();
 $is_admin = $member_info['role'] === 'admin';
 
-// Handle adding events
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['add_events'])) {
     foreach ($_POST['add_events'] as $event_id) {
         $event_id = $conn->real_escape_string($event_id);
@@ -115,15 +114,15 @@ $watchlist = $conn->query("SELECT * FROM saved_events ORDER BY date_time ASC");
 if ($group_events->num_rows > 0) {
     while ($event = $group_events->fetch_assoc()) {
         echo "<div class='event'>";
-        echo "<h2>" . htmlspecialchars($event['name']) . "</h2>";
-        echo "<p><strong>Date:</strong> " . htmlspecialchars($event['date_time']) . "</p>";
-        echo "<p><strong>Venue:</strong> " . htmlspecialchars($event['venue']) . "</p>";
+        echo "<h2>" . ($event['name']) . "</h2>";
+        echo "<p><strong>Date:</strong> " . ($event['date_time']) . "</p>";
+        echo "<p><strong>Venue:</strong> " . ($event['venue']) . "</p>";
         echo "<div class='event-actions'>";
-        echo "<a class='view-btn' href='" . htmlspecialchars($event['url']) . "' target='_blank'>View Event</a>";
+        echo "<a class='view-btn' href='" . ($event['url']) . "' target='_blank'>View Event</a>";
 
         if ($is_admin) {
             echo "<label style='margin-left:10px;'>";
-            echo "<input type='checkbox' name='remove_events[]' value='" . htmlspecialchars($event['event_id']) . "'> Remove";
+            echo "<input type='checkbox' name='remove_events[]' value='" . ($event['event_id']) . "'> Remove";
             echo "</label>";
         }
 
@@ -144,11 +143,11 @@ if ($group_events->num_rows > 0) {
 if ($watchlist->num_rows > 0) {
     while ($event = $watchlist->fetch_assoc()) {
         echo "<div class='event'>";
-        echo "<h2>" . htmlspecialchars($event['event_name']) . "</h2>";
-        echo "<p><strong>Date:</strong> " . htmlspecialchars($event['date_time']) . "</p>";
-        echo "<p><strong>Venue:</strong> " . htmlspecialchars($event['venue']) . "</p>";
+        echo "<h2>" . ($event['event_name']) . "</h2>";
+        echo "<p><strong>Date:</strong> " . ($event['date_time']) . "</p>";
+        echo "<p><strong>Venue:</strong> " . ($event['venue']) . "</p>";
         echo "<label>";
-        echo "<input type='checkbox' name='add_events[]' value='" . htmlspecialchars($event['event_id']) . "'> Add to Group";
+        echo "<input type='checkbox' name='add_events[]' value='" . ($event['event_id']) . "'> Add to Group";
         echo "</label>";
         echo "</div>";
     }
