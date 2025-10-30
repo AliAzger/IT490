@@ -101,11 +101,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['selected_events'])) 
     <meta charset="UTF-8">
     <title></title>
     <style>
-        body { font-family: Arial; margin: 20px; }
-        .event { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-        .event h2 { margin-top: 0; }
-        .event-actions { display: flex; align-items: center; gap: 8px; }
-        .searchform { margin-bottom: 20px; }
+        body { 
+			font-family: 
+				Arial; 
+			margin: 20px; 
+		}
+        .event { 
+			border: 1px 
+				solid #ccc; 
+			padding: 15px; 
+			margin-bottom: 10px; 
+			border-radius: 5px;
+		}
+        .event h2 { 
+			margin-top: 0; }
+        .event-actions { 
+			display: flex; 
+			align-items: center; 
+			gap: 8px; 
+		}
+        .searchform { 
+			margin-bottom: 20px;
+		}
     </style>
 </head>
 <body>
@@ -113,8 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['selected_events'])) 
 
 <div class="searchform">
     <form method="get">
-        <input type="text" name="keyword" placeholder="Keyword" value="<?= htmlspecialchars($keyword) ?>">
-        <input type="text" name="city" placeholder="City" value="<?= htmlspecialchars($city) ?>">
+        <input type="text" name="keyword" placeholder="Keyword" value="<?= ($keyword) ?>">
+        <input type="text" name="city" placeholder="City" value="<?= ($city) ?>">
         <button type="submit">Search</button>
     </form>
 </div>
@@ -128,13 +145,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['selected_events'])) 
                 $address = $event['_embedded']['venues'][0]['address']['line1'] ?? '';
 
                 echo "<div class='event'>";
-                echo "<h2>" . htmlspecialchars($event['name']) . "</h2>";
-                echo "<p><strong>Date:</strong> " . htmlspecialchars(($event['dates']['start']['localDate'] ?? '') . ' ' . ($event['dates']['start']['localTime'] ?? '')) . "</p>";
-                echo "<p><strong>Venue:</strong> " . htmlspecialchars($venue . ' ' . $address) . "</p>";
+                echo "<h2>" . ($event['name']) . "</h2>";
+                echo "<p><strong>Date:</strong> " . (($event['dates']['start']['localDate'] ?? '') . ' ' . ($event['dates']['start']['localTime'] ?? '')) . "</p>";
+                echo "<p><strong>Venue:</strong> " . ($venue . ' ' . $address) . "</p>";
 
                 echo "<div class='event-actions'>";
-                echo "<a href='" . htmlspecialchars($event['url']) . "' target='_blank'>View Event</a>";
-                echo "<input type='checkbox' name='selected_events[]' value='" . htmlspecialchars($event['id']) . "'>";
+                echo "<a href='" . ($event['url']) . "' target='_blank'>View Event</a>";
+                echo "<input type='checkbox' name='selected_events[]' value='" . ($event['id']) . "'>";
                 echo "</div>";
 
                 echo "</div>";
