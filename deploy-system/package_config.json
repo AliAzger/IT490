@@ -1,0 +1,28 @@
+{
+    "packages": {
+        "p1": {
+            "files": {
+                "frontend": [
+                    "header.php",
+                    "header.css",
+                    "headerhome.php"
+                ],
+                "backend": [
+                    "database.php",
+                    "register.php"
+                ],
+                "dmz": [
+                    "ticketmaster_api.php"
+                ]
+            }
+        },
+        "p2": {
+            "files": {
+                "backend": [
+                    "database.php",
+                    "register.php"
+                ]
+            }
+        }
+    }
+}
