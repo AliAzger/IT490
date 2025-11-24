@@ -2,6 +2,7 @@
 
 import json
 import pika
+import time
 
 # constants/config
 RABBITMQ_IP = "100.93.74.30" # my testing ip
@@ -39,7 +40,7 @@ def listen_for_rabbit_messages():
       case "package_version":
         package = message["package"]
         
-        # check package version in database
+        # TODO: check package version in database
         response["success"] = 1
         response["version"] = 0
       case "publish_package":
@@ -47,7 +48,16 @@ def listen_for_rabbit_messages():
         version = message["version"]
         archive = message["archive"]
         
-        # update database with new package info
+        # TODO update database with new package info
+        response["success"] = 1
+      case "deploy":
+        package = message["package"]
+        version = message["version"]
+        env = message["env"]
+        
+        time.sleep(3) # wait a bit for http server to open up
+        
+        # TODO do deployment (call bash script, or wahtever)
         response["success"] = 1
       case _:
         response["success"] = 0

@@ -2,7 +2,6 @@
 
 import json
 import os
-import shutil
 import subprocess
 import pika
 
@@ -22,13 +21,15 @@ def init_rabbit_connection():
   channel.queue_declare(queue='deployment')
   RABBITMQ_CHANNEL = channel
 
-def send_rabbit_message(message:str):
+def send_rabbit_message(message:str, wait_for_res=True):
   RABBITMQ_CHANNEL.queue_declare(queue='deployment_response')
   properties = pika.BasicProperties(reply_to='deployment_response')
   RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment', body=message, properties=properties)
-  for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
-    RABBITMQ_CHANNEL.cancel()
-    return json.loads(body)
+  
+  if wait_for_res:
+    for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
+      RABBITMQ_CHANNEL.cancel()
+      return json.loads(body)
 
 def load_package_config(path):
   with open(path) as file:
@@ -39,7 +40,7 @@ def choose_package():
   selection = None
   
   while not selection:
-    print("Choose the number of the package to publish:")
+    print("Choose the number of the package to deploy:")
     i = 1
     choices = [package_name for package_name in PACKAGE_INFO["packages"]]
     for option in choices:
@@ -71,36 +72,6 @@ def get_current_package_version(package_name):
   print("  found version", res["version"])
   return res["version"]
 
-def publish_package(package_name, version, archive_path):
-  print("publishing", package_name, "version", version, f"({archive_path})")
-  message_body = {
-    "event": "publish_package",
-    "package": package_name,
-    "version": version,
-    "archive": archive_path,
-  }
-  message_body_str = json.dumps(message_body)
-  
-  res = send_rabbit_message(message_body_str)
-  
-  if not res["success"]:
-    print("Deployment server error publishing package")
-    quit()
-
-def create_package_archive(package_name, version):
-  archive_name = None
-  os.mkdir(package_name)
-  
-  for vm, files in PACKAGE_INFO["packages"][package_name]["files"].items():
-    os.mkdir(f"{package_name}/{vm}")
-    for file in files:
-      shutil.copyfile(f"../{file}", f"{package_name}/{vm}/{file}")
-  
-  archive_name = shutil.make_archive(f"{package_name}-{version}", "gztar", base_dir=f"{package_name}")
-    
-  shutil.rmtree(package_name)
-  return archive_name
-
 def main():
   global PACKAGE_INFO
   
@@ -113,10 +84,25 @@ def main():
   PACKAGE_INFO = load_package_config("package_config.json")
       
   chosen_package = choose_package()
-  version = get_current_package_version(chosen_package) + 1
-  archive = create_package_archive(chosen_package, version)
+  version = get_current_package_version(chosen_package)
   
-  publish_package(chosen_package, version, archive)
+  selected_version = int(input(f"version to deploy (most recent is {version}): "))
+  selected_env = input(f"environment to deploy to (qa/prod): ")
+  if selected_env.lower() not in ["qa", "prod"]:
+    print("bad env")
+    quit()
+  
+  message_body = {
+    "event": "deploy",
+    "package": chosen_package,
+    "version": selected_version,
+    "env": selected_env
+  }
+  message_body_str = json.dumps(message_body)
+  
+  send_rabbit_message(message_body_str, wait_for_res=False)
+  
+  subprocess.run(['python', '-m', 'http.server']) 
 
 if __name__ == "__main__":
   main()
