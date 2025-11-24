@@ -16,8 +16,8 @@ Python to publish new package versions to deployment server, Bash to deploy to V
 - Can run in a venv for consistency/repeatability
 - Bash is easy for system utils/file operations
 
-### Using Python to publish:
-- Config file (JSON, YAML, whatever) that maps `package_name`s to a list of files that belong in package
+### Using Python to publish/deploy:
+- Config file (****JSON****, YAML, whatever) that maps `package_name`s to a list of files that belong in package
     - also describes which files go to which vms
 - run python script (from dev machine, maybe backend?)
 - user picks which package to publish
@@ -25,18 +25,18 @@ Python to publish new package versions to deployment server, Bash to deploy to V
 - increment version for package
 - create archive for `package_name-version` containing all included files
     - files organized by VM they belong in
-- allow that archive to be downloaded via scp
+- allow that archive to be downloaded via ~~scp~~ http server
 - send name+version through rabbit to deployment server
 
 ### Using Bash to deploy:
-- php listener to
+- ~~php~~ Python listener to
     - report current package versions when requested
     - receive new package versions
     - add new package version numbers to database
-    - trigger Bash script to run when request to deploy is received
+    - trigger Bash script to run when request to deploy is received (or auto deploy to QA)
 - Bash code will
     - take in environment to deploy to
-    - scp the archive from the publishing machine to the deployment server
+    - ~~scp~~ cURL the archive from the publishing machine (http server) to the deployment server
     - unarchive
     - scp files from each VM dir to the proper VM in the specified env
         - NOTE: may need to find a way to restart services if necessary after files are replaced

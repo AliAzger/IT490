@@ -5,20 +5,22 @@ import pika
 import time
 
 # constants/config
-RABBITMQ_IP = "100.93.74.30" # my testing ip
-# RABBITMQ_IP = "172.25.28.168"
+# RABBITMQ_IP = "100.93.74.30" # my testing ip
+RABBITMQ_IP = "172.25.28.168"
 
 # globals
 RABBITMQ_CHANNEL = None
 
 def init_rabbit_connection():
   global RABBITMQ_CHANNEL
+  print("trying to connect to rabbit...")
   creds = pika.PlainCredentials('test', 'test')
   connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_IP, 5672, 'testHost', creds))
   channel = connection.channel()
   channel.queue_declare(queue='deployment')
   channel.queue_declare(queue='deployment_response')
   RABBITMQ_CHANNEL = channel
+  print("connected")
 
 def send_rabbit_response(messageObj):
   message = json.dumps(messageObj)
