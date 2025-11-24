@@ -3,8 +3,7 @@
 import json
 import os
 import shutil
-from http import server
-
+import subprocess
 import pika
 
 # constants/config
@@ -56,6 +55,7 @@ def choose_package():
   return selection
 
 def get_current_package_version(package_name):
+  print("requesting", package_name, "version")
   message_body = {
     "event": "package_version",
     "package": package_name
@@ -67,12 +67,12 @@ def get_current_package_version(package_name):
   if not res["success"]:
     print(f"Deployment server error getting version for package {package_name}")
     quit()
-    
+  
+  print("  found version", res["version"])
   return res["version"]
 
 def publish_package(package_name, version, archive_path):
-  print("publishing", package_name, "version", version)
-
+  print("publishing", package_name, "version", version, f"({archive_path})")
   message_body = {
     "event": "publish_package",
     "package": package_name,
@@ -96,13 +96,17 @@ def create_package_archive(package_name, version):
     for file in files:
       shutil.copyfile(f"../{file}", f"{package_name}/{vm}/{file}")
   
-  archive_name = shutil.make_archive(f"{package_name}-{version}", "gztar", "..")
+  archive_name = shutil.make_archive(f"{package_name}-{version}", "gztar", base_dir=f"{package_name}")
     
   shutil.rmtree(package_name)
   return archive_name
 
 def main():
   global PACKAGE_INFO
+  
+  if "deploy-system" not in os.getcwd():
+    print("please run this script from the deploy-system directory")
+    quit()
   
   init_rabbit_connection()
   
@@ -114,7 +118,7 @@ def main():
   
   publish_package(chosen_package, version, archive)
   
-  # TODO allow server to grab archive (http server? scp/ftp?)
+  subprocess.run(['python', '-m', 'http.server']) 
 
 if __name__ == "__main__":
   main()
