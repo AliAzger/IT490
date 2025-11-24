@@ -5,7 +5,26 @@ import os
 import shutil
 from http import server
 
+import pika
+
+# constants/config
+RABBITMQ_IP = "10.0.2.7"
+# RABBITMQ_IP = "172.25.28.168"
+
+# globals
 PACKAGE_INFO = None
+RABBITMQ_CHANNEL = None
+
+def init_rabbit_connection():
+  global RABBITMQ_CHANNEL
+  creds = pika.PlainCredentials('test', 'test')
+  connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_IP, 5672, 'testHost', creds))
+  channel = connection.channel()
+  channel.queue_declare(queue='deployment')
+  RABBITMQ_CHANNEL = channel
+
+def send_rabbit_message(body:str):
+  RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment', body=body)
 
 def load_package_config(path):
   with open(path) as file:
@@ -60,6 +79,9 @@ def create_package_archive(package_name, version):
 
 def main():
   global PACKAGE_INFO
+  
+  init_rabbit_connection()
+  return
   PACKAGE_INFO = load_package_config("package_config.json")
       
   chosen_package = choose_package()
