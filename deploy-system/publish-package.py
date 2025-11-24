@@ -8,7 +8,7 @@ from http import server
 import pika
 
 # constants/config
-RABBITMQ_IP = "10.0.2.7"
+RABBITMQ_IP = "100.93.74.30" # my testing ip
 # RABBITMQ_IP = "172.25.28.168"
 
 # globals
@@ -23,8 +23,13 @@ def init_rabbit_connection():
   channel.queue_declare(queue='deployment')
   RABBITMQ_CHANNEL = channel
 
-def send_rabbit_message(body:str):
-  RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment', body=body)
+def send_rabbit_message(message:str):
+  RABBITMQ_CHANNEL.queue_declare(queue='deployment_response')
+  properties = pika.BasicProperties(reply_to='deployment_response')
+  RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment', body=message, properties=properties)
+  for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
+    RABBITMQ_CHANNEL.cancel()
+    return json.loads(body)
 
 def load_package_config(path):
   with open(path) as file:
@@ -51,17 +56,36 @@ def choose_package():
   return selection
 
 def get_current_package_version(package_name):
-  res = 0 # TODO get this from server thru rabbitmq
+  message_body = {
+    "event": "package_version",
+    "package": package_name
+  }
+  message_body_str = json.dumps(message_body)
   
-  if res == None:
-    print("Deployment server error")
+  res = send_rabbit_message(message_body_str)
+  
+  if not res["success"]:
+    print(f"Deployment server error getting version for package {package_name}")
     quit()
     
-  return res
+  return res["version"]
 
-def publish_package(package_name, version, archive_name):
+def publish_package(package_name, version, archive_path):
   print("publishing", package_name, "version", version)
-  # TODO send package name, version, and archive path to server thru rabbit
+
+  message_body = {
+    "event": "publish_package",
+    "package": package_name,
+    "version": version,
+    "archive": archive_path,
+  }
+  message_body_str = json.dumps(message_body)
+  
+  res = send_rabbit_message(message_body_str)
+  
+  if not res["success"]:
+    print("Deployment server error publishing package")
+    quit()
 
 def create_package_archive(package_name, version):
   archive_name = None
@@ -81,7 +105,7 @@ def main():
   global PACKAGE_INFO
   
   init_rabbit_connection()
-  return
+  
   PACKAGE_INFO = load_package_config("package_config.json")
       
   chosen_package = choose_package()
