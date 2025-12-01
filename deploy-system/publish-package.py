@@ -22,13 +22,15 @@ def init_rabbit_connection():
   channel.queue_declare(queue='deployment')
   RABBITMQ_CHANNEL = channel
 
-def send_rabbit_message(message:str):
+def send_rabbit_message(message:str, wait_for_res=True):
   RABBITMQ_CHANNEL.queue_declare(queue='deployment_response')
   properties = pika.BasicProperties(reply_to='deployment_response')
   RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment', body=message, properties=properties)
-  for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
-    RABBITMQ_CHANNEL.cancel()
-    return json.loads(body)
+  
+  if wait_for_res:
+    for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
+      RABBITMQ_CHANNEL.cancel()
+      return json.loads(body)
 
 def load_package_config(path):
   with open(path) as file:
@@ -97,8 +99,8 @@ def create_package_archive(package_name, version):
       shutil.copyfile(f"../{file}", f"{package_name}/{vm}/{file}")
   
   archive_name = shutil.make_archive(f"{package_name}-{version}", "gztar", base_dir=f"{package_name}")
-    
   shutil.rmtree(package_name)
+  shutil.move(archive_name, "packages")
   return archive_name
 
 def main():
@@ -111,14 +113,15 @@ def main():
   init_rabbit_connection()
   
   PACKAGE_INFO = load_package_config("package_config.json")
-      
+
   chosen_package = choose_package()
   version = get_current_package_version(chosen_package) + 1
   archive = create_package_archive(chosen_package, version)
   
   publish_package(chosen_package, version, archive)
   
-  subprocess.run(['python', '-m', 'http.server']) 
+  os.chdir("packages")
+  subprocess.run(['python', '-m', 'http.server'])
 
 if __name__ == "__main__":
   main()
