@@ -6,7 +6,7 @@ import time
 import mysql.connector
 
 # constants/config
-RABBITMQ_IP = "100.93.74.30" # my testing ip
+RABBITMQ_IP = "10.0.2.7" # my testing ip
 # RABBITMQ_IP = "172.25.28.168"
 
 DATABASE_IP = "127.0.0.1" # my testing ip
@@ -32,7 +32,7 @@ def init_mysql_connection():
   print("trying to connect to db...")
   try:
     mydb = mysql.connector.connect(
-        host="localhost",
+        host=DATABASE_IP,
         user="testUser",
         password="12345",
         database="testdb"
@@ -62,23 +62,24 @@ def listen_for_rabbit_messages():
       case "package_version":
         package = message["package"]
         
-        # TODO: check package version in database
         query = f"SELECT * FROM deployment WHERE package_name = '{package}' ORDER BY version DESC"
         cursor = MYSQL_DATABASE.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
         
-        for entry in result:
-          print(entry)
+        print(result)
+        
+        if len(result) <= 0:
+          response["version"] = 0
+        else:
+          response["version"] = result[0][2] # 2 means version
         
         response["success"] = 1
-        response["version"] = result[0]['version']
       case "publish_package":
         package = message["package"]
         version = message["version"]
         archive = message["archive"]
         
-        # TODO update database with new package info
         query = f"INSERT INTO deployment (package_name, version, archive) VALUES ('{package}', {version}, '{archive}')"
         cursor.execute(query)
         MYSQL_DATABASE.commit()
@@ -102,6 +103,7 @@ def listen_for_rabbit_messages():
 
 def main():
   init_rabbit_connection()
+  init_mysql_connection()
   listen_for_rabbit_messages()
 
 if __name__ == "__main__":
