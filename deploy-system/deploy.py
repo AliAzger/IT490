@@ -2,12 +2,11 @@
 
 import json
 import os
-import subprocess
 import pika
 
 # constants/config
-# RABBITMQ_IP = "100.93.74.30" # my testing ip
-RABBITMQ_IP = "172.25.28.168"
+RABBITMQ_IP = "100.93.74.30" # my testing ip
+# RABBITMQ_IP = "172.25.28.168"
 
 # globals
 PACKAGE_INFO = None
@@ -101,8 +100,6 @@ def main():
   message_body_str = json.dumps(message_body)
   
   send_rabbit_message(message_body_str, wait_for_res=False)
-  
-  subprocess.run(['python', '-m', 'http.server']) 
 
 if __name__ == "__main__":
   main()

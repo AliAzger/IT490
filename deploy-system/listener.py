@@ -4,13 +4,17 @@ import json
 import pika
 import time
 import mysql.connector
+import os
+import requests
 
 # constants/config
-RABBITMQ_IP = "10.0.2.7" # my testing ip
+RABBITMQ_IP = "100.93.74.30" # my testing ip
 # RABBITMQ_IP = "172.25.28.168"
 
 DATABASE_IP = "127.0.0.1" # my testing ip
 # DATABASE_IP = "172.25.199.66"
+
+PUBLISHER_IP = "100.97.33.42" # my testing ip
 
 # globals
 RABBITMQ_CHANNEL = None
@@ -83,15 +87,22 @@ def listen_for_rabbit_messages():
         query = f"INSERT INTO deployment (package_name, version, archive) VALUES ('{package}', {version}, '{archive}')"
         cursor.execute(query)
         MYSQL_DATABASE.commit()
+        
+        time.sleep(2) # wait a bit for http server to open up
+        
+        # download archive
+        res = requests.get(f"{PUBLISHER_IP}:8000/{archive}")
+        res.raise_for_status()
+        
+        with open(archive, "wb") as f:
+          f.write(res.content)
 
         response["success"] = 1
       case "deploy":
         package = message["package"]
         version = message["version"]
         env = message["env"]
-        
-        time.sleep(3) # wait a bit for http server to open up
-        
+                
         # TODO do deployment (call bash script, or wahtever)
         response["success"] = 1
       case _:
@@ -102,6 +113,10 @@ def listen_for_rabbit_messages():
     send_rabbit_response(response)
 
 def main():
+  if "deploy-system" not in os.getcwd():
+    print("please run this script from the deploy-system directory")
+    quit()
+  
   init_rabbit_connection()
   init_mysql_connection()
   listen_for_rabbit_messages()
