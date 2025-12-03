@@ -15,7 +15,7 @@ $queueName  = 'testQueue';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $password = md5($_POST['password'] ?? '');
 
     if (empty($username) || empty($password)) {
         echo "Username and password are required.";
