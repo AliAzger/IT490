@@ -58,7 +58,17 @@ if [ $? -eq 0 ]; then
     fi
 fi
 
+# copy to dmz
+ls $package_name | grep "dmz"
+if [ $? -eq 0 ]; then
+    scp -r $package_name/dmz/* $dest_ip: # NEED TO PUT PATH HERE FOR DMZ FILES TO GO TO
+    if [ $? -ne 0 ]; then
+        echo "Failed to deploy dmz files to $dest_ip"
+    fi
+fi
+
 rm -r $package_name
 
 # restart services?
+# would need a new user with permissions to do this; trying to avoid making deploy user
 # ssh $dest_ip "systemctl restart apache2.service"
