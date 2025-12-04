@@ -2,12 +2,10 @@
     "packages": {
         "p1": {
             "files": {
-                "frontend": [
+                "webserver": [
                     "header.php",
                     "header.css",
-                    "headerhome.php"
-                ],
-                "backend": [
+                    "headerhome.php",
                     "database.php",
                     "register.php"
                 ],
@@ -18,7 +16,7 @@
         },
         "p2": {
             "files": {
-                "backend": [
+                "webserver": [
                     "database.php",
                     "register.php"
                 ]

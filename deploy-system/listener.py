@@ -6,6 +6,7 @@ import time
 import mysql.connector
 import os
 import requests
+import subprocess
 
 # constants/config
 RABBITMQ_IP = "100.93.74.30" # my testing ip
@@ -49,6 +50,12 @@ def init_mysql_connection():
 def send_rabbit_response(messageObj):
   message = json.dumps(messageObj)
   RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment_response', body=message)
+
+def trigger_deployment(package, archive, env:str):
+  if env.lower() not in ["qa", "prod"]:
+    print("invalid environment; must be qa or prod")
+    return False
+  return True if subprocess.run(["./deploy.sh", package, archive, env.lower()]).returncode == 0 else False
 
 def listen_for_rabbit_messages():
   for method, prop, body in RABBITMQ_CHANNEL.consume("deployment", True):
@@ -98,13 +105,17 @@ def listen_for_rabbit_messages():
           f.write(res.content)
 
         response["success"] = 1
+        
+        # try autodeplying to qa
+        trigger_deployment(package, archive, "qa")
       case "deploy":
         package = message["package"]
         version = message["version"]
         env = message["env"]
                 
         # TODO do deployment (call bash script, or wahtever)
-        response["success"] = 1
+        deployed = trigger_deployment(package, archive, "qa")
+        response["success"] = int(deployed)
       case _:
         response["success"] = 0
         response["comment"] = "unknown event"
