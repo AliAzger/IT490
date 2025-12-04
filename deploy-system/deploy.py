@@ -20,15 +20,14 @@ def init_rabbit_connection():
   channel.queue_declare(queue='deployment')
   RABBITMQ_CHANNEL = channel
 
-def send_rabbit_message(message:str, wait_for_res=True):
+def send_rabbit_message(message:str):
   RABBITMQ_CHANNEL.queue_declare(queue='deployment_response')
   properties = pika.BasicProperties(reply_to='deployment_response')
   RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment', body=message, properties=properties)
   
-  if wait_for_res:
-    for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
-      RABBITMQ_CHANNEL.cancel()
-      return json.loads(body)
+  for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
+    RABBITMQ_CHANNEL.cancel()
+    return json.loads(body)
 
 def load_package_config(path):
   with open(path) as file:
@@ -99,7 +98,7 @@ def main():
   }
   message_body_str = json.dumps(message_body)
   
-  send_rabbit_message(message_body_str, wait_for_res=False)
+  send_rabbit_message(message_body_str)
 
 if __name__ == "__main__":
   main()

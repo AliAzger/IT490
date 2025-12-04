@@ -103,8 +103,6 @@ def listen_for_rabbit_messages():
         
         with open(archive, "wb") as f:
           f.write(res.content)
-
-        response["success"] = 1
         
         # try autodeplying to qa
         trigger_deployment(package, archive, "qa")
@@ -130,15 +128,15 @@ def listen_for_rabbit_messages():
           archive = result[0][0]
         
         if archive:
-          # TODO do deployment (call bash script, or wahtever)
           deployed = trigger_deployment(package, archive, env)
           response["success"] = int(deployed)
       case _:
         response["success"] = 0
         response["comment"] = "unknown event"
     
-    print("  responding", response)
-    send_rabbit_response(response)
+    if response:
+      print("  responding", response)
+      send_rabbit_response(response)
 
 def main():
   if "deploy-system" not in os.getcwd():
