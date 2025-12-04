@@ -83,11 +83,11 @@ def publish_package(package_name, version, archive_path):
   }
   message_body_str = json.dumps(message_body)
   
-  res = send_rabbit_message(message_body_str)
+  res = send_rabbit_message(message_body_str, wait_for_res=False)
   
-  if not res["success"]:
-    print("Deployment server error publishing package")
-    quit()
+  # if not res["success"]:
+  #   print("Deployment server error publishing package")
+  #   quit()
 
 def create_package_archive(package_name, version):
   archive_name = None

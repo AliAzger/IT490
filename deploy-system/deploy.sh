@@ -24,6 +24,14 @@ if [ "$env" == 'prod' ]; then
     dest_ip="prod"
 fi
 
+# ensure env is up
+ping -w 3 $dest_ip
+
+while [ $? -ne 0 ]; do
+    sleep 5
+    ping -w 3 $dest_ip
+done
+
 ls | grep "$archive_name"
 
 if [ $? -ne 0 ]; then
