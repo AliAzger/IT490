@@ -98,7 +98,7 @@ def listen_for_rabbit_messages():
         time.sleep(2) # wait a bit for http server to open up
         
         # download archive
-        res = requests.get(f"{PUBLISHER_IP}:8000/{archive}")
+        res = requests.get(f"http://{PUBLISHER_IP}:8000/{archive}")
         res.raise_for_status()
         
         with open(archive, "wb") as f:
