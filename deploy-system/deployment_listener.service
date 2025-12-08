@@ -1,6 +1,7 @@
 [Unit]
 Description=Launch deployment server listener
-After=network.target
+After=network.target tailscaled.service mysql.service
+Requires=mysql.service tailscaled.service
 
 [Service]
 Type=simple
