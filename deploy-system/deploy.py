@@ -2,12 +2,11 @@
 
 import json
 import os
-import subprocess
 import pika
 
 # constants/config
-# RABBITMQ_IP = "100.93.74.30" # my testing ip
-RABBITMQ_IP = "172.25.28.168"
+RABBITMQ_IP = "100.93.74.30" # my testing ip
+# RABBITMQ_IP = "172.25.28.168"
 
 # globals
 PACKAGE_INFO = None
@@ -21,15 +20,14 @@ def init_rabbit_connection():
   channel.queue_declare(queue='deployment')
   RABBITMQ_CHANNEL = channel
 
-def send_rabbit_message(message:str, wait_for_res=True):
+def send_rabbit_message(message:str):
   RABBITMQ_CHANNEL.queue_declare(queue='deployment_response')
   properties = pika.BasicProperties(reply_to='deployment_response')
   RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment', body=message, properties=properties)
   
-  if wait_for_res:
-    for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
-      RABBITMQ_CHANNEL.cancel()
-      return json.loads(body)
+  for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
+    RABBITMQ_CHANNEL.cancel()
+    return json.loads(body)
 
 def load_package_config(path):
   with open(path) as file:
@@ -72,6 +70,23 @@ def get_current_package_version(package_name):
   print("  found version", res["version"])
   return res["version"]
 
+def get_successful_package_version(package_name):
+  print("requesting", package_name, "last successful version")
+  message_body = {
+    "event": "package_version_pass",
+    "package": package_name
+  }
+  message_body_str = json.dumps(message_body)
+  
+  res = send_rabbit_message(message_body_str)
+  
+  if not res["success"]:
+    print(f"Deployment server error getting passed version for package {package_name}")
+    quit()
+  
+  print("  found version", res["version"])
+  return res["version"]
+
 def main():
   global PACKAGE_INFO
   
@@ -100,9 +115,36 @@ def main():
   }
   message_body_str = json.dumps(message_body)
   
-  send_rabbit_message(message_body_str, wait_for_res=False)
+  send_rabbit_message(message_body_str)
   
-  subprocess.run(['python', '-m', 'http.server']) 
+  if selected_env.lower() != "qa": quit()
+  
+  package_pass = input("Package passed (mark as good)? [y/N] ")
+  
+  message_body = {
+    "event": "pass-fail",
+    "package": chosen_package,
+    "version": selected_version,
+    "status": "pass" if package_pass.lower() == 'y' else "fail"
+  }
+  message_body_str = json.dumps(message_body)
+  
+  send_rabbit_message(message_body_str)
+  
+  if package_pass.lower() != 'y':
+    # need to rollback
+    rollback_version = get_successful_package_version(chosen_package)
+    print("rolling back to version", rollback_version)
+    
+    message_body = {
+      "event": "deploy",
+      "package": chosen_package,
+      "version": rollback_version,
+      "env": selected_env
+    }
+    message_body_str = json.dumps(message_body)
+    
+    send_rabbit_message(message_body_str)
 
 if __name__ == "__main__":
   main()

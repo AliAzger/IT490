@@ -1,0 +1,15 @@
+[Unit]
+Description=Launch deployment server listener
+After=network.target tailscaled.service mysql.service
+Requires=mysql.service tailscaled.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash launch-deploy-listener.sh
+Restart=on-failure
+RestartSec=1s
+User=dylan
+WorkingDirectory=/home/dylan/dev/IT490/
+
+[Install]
+WantedBy=multi-user.target

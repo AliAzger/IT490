@@ -1,26 +1,81 @@
 {
     "packages": {
-        "p1": {
+        "data_utils": {
             "files": {
-                "frontend": [
-                    "header.php",
-                    "header.css",
-                    "headerhome.php"
-                ],
-                "backend": [
-                    "database.php",
-                    "register.php"
-                ],
                 "dmz": [
-                    "ticketmaster_api.php"
+                    "database.php",
+                    "ticketmasterapi.php",
+                    "config.php"
                 ]
             }
         },
-        "p2": {
+        "website_header": {
             "files": {
-                "backend": [
-                    "database.php",
+                "webserver": [
+                    "header.php",
+                    "header.css"
+                ]
+            }
+        },
+        "website_register": {
+            "files": {
+                "webserver": [
+                    "register.html",
                     "register.php"
+                ]
+            }
+        },
+        "website_login": {
+            "files": {
+                "webserver": [
+                    "index.html",
+                    "login.php"
+                ]
+            }
+        },
+        "website_home": {
+            "files": {
+                "webserver": [
+                    "hometest.php",
+                    "home.html"
+                ]
+            }
+        },
+        "website_watchlist": {
+            "files": {
+                "webserver": [
+                    "watchlist.php"
+                ]
+            }
+        },
+        "website_review": {
+            "files": {
+                "webserver": [
+                    "reviewtest.php"
+                ]
+            }
+        },
+        "website_recommendations": {
+            "files": {
+                "webserver": [
+                    "recommendationstest.php"
+                ]
+            }
+        },
+        "website_groups": {
+            "files": {
+                "webserver": [
+                    "grouptest.php",
+                    "group_events.php",
+                    "group_members.php"
+                ]
+            }
+        },
+        "website_account": {
+            "files": {
+                "webserver": [
+                    "accounttest.php",
+                    "test_notifications.php"
                 ]
             }
         }

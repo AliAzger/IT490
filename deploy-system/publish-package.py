@@ -4,10 +4,11 @@ import json
 import os
 import shutil
 import pika
+import subprocess
 
 # constants/config
-# RABBITMQ_IP = "100.93.74.30" # my testing ip
-RABBITMQ_IP = "172.25.28.168"
+RABBITMQ_IP = "100.93.74.30" # my testing ip
+# RABBITMQ_IP = "172.25.28.168"
 
 # globals
 PACKAGE_INFO = None
@@ -21,13 +22,15 @@ def init_rabbit_connection():
   channel.queue_declare(queue='deployment')
   RABBITMQ_CHANNEL = channel
 
-def send_rabbit_message(message:str):
+def send_rabbit_message(message:str, wait_for_res=True):
   RABBITMQ_CHANNEL.queue_declare(queue='deployment_response')
   properties = pika.BasicProperties(reply_to='deployment_response')
   RABBITMQ_CHANNEL.basic_publish(exchange='', routing_key='deployment', body=message, properties=properties)
-  for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
-    RABBITMQ_CHANNEL.cancel()
-    return json.loads(body)
+  
+  if wait_for_res:
+    for method, prop, body in RABBITMQ_CHANNEL.consume("deployment_response", True):
+      RABBITMQ_CHANNEL.cancel()
+      return json.loads(body)
 
 def load_package_config(path):
   with open(path) as file:
@@ -80,11 +83,11 @@ def publish_package(package_name, version, archive_path):
   }
   message_body_str = json.dumps(message_body)
   
-  res = send_rabbit_message(message_body_str)
+  res = send_rabbit_message(message_body_str, wait_for_res=False)
   
-  if not res["success"]:
-    print("Deployment server error publishing package")
-    quit()
+  # if not res["success"]:
+  #   print("Deployment server error publishing package")
+  #   quit()
 
 def create_package_archive(package_name, version):
   archive_name = None
@@ -96,8 +99,8 @@ def create_package_archive(package_name, version):
       shutil.copyfile(f"../{file}", f"{package_name}/{vm}/{file}")
   
   archive_name = shutil.make_archive(f"{package_name}-{version}", "gztar", base_dir=f"{package_name}")
-    
   shutil.rmtree(package_name)
+  shutil.move(archive_name, "packages")
   return archive_name
 
 def main():
@@ -110,12 +113,15 @@ def main():
   init_rabbit_connection()
   
   PACKAGE_INFO = load_package_config("package_config.json")
-      
+
   chosen_package = choose_package()
   version = get_current_package_version(chosen_package) + 1
   archive = create_package_archive(chosen_package, version)
   
   publish_package(chosen_package, version, archive)
+  
+  os.chdir("packages")
+  subprocess.run(['python', '-m', 'http.server'])
 
 if __name__ == "__main__":
   main()

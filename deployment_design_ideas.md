@@ -33,10 +33,15 @@ Python to publish new package versions to deployment server, Bash to deploy to V
     - report current package versions when requested
     - receive new package versions
     - add new package version numbers to database
+    - ~~scp~~ ~~cURL~~ `requests` module the archive from the publishing machine (http server) to the deployment server
     - trigger Bash script to run when request to deploy is received (or auto deploy to QA)
 - Bash code will
     - take in environment to deploy to
-    - ~~scp~~ cURL the archive from the publishing machine (http server) to the deployment server
     - unarchive
     - scp files from each VM dir to the proper VM in the specified env
+        - files go into `/var/www/sample/`
         - NOTE: may need to find a way to restart services if necessary after files are replaced
+
+### Setup necessary
+- On each VM we are deploying TO: `sudo apt update; sudo apt install openssh-server; sudo chmod 777 /var/www/sample`
+- On deploy server: `ssh-keygen -t rsa -b 4096` then `ssh-copy-id <vm_ip>`
