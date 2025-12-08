@@ -99,6 +99,20 @@ def main():
   message_body_str = json.dumps(message_body)
   
   send_rabbit_message(message_body_str)
+  
+  if selected_env.lower() != "qa": quit()
+  
+  package_pass = input("Package passed (mark as good)? [y/N]")
+  
+  message_body = {
+    "event": "pass-fail",
+    "package": chosen_package,
+    "version": selected_version,
+    "status": "pass" if package_pass.lower() == 'y' else "fail"
+  }
+  message_body_str = json.dumps(message_body)
+  
+  send_rabbit_message(message_body_str)
 
 if __name__ == "__main__":
   main()

@@ -130,6 +130,18 @@ def listen_for_rabbit_messages():
         if archive:
           deployed = trigger_deployment(package, archive, env)
           response["success"] = int(deployed)
+      case "pass-fail":
+        package = message["package"]
+        version = message["version"]
+        status = message["status"]
+        
+        bool_status = 1 if status == "pass" else 0
+        
+        # set status for package version
+        query = f"UPDATE deployment SET pass_flag = {bool_status} WHERE package_name = '{package}' AND version = {version}"
+        cursor = MYSQL_DATABASE.cursor()
+        cursor.execute(query)
+        MYSQL_DATABASE.commit()
       case _:
         response["success"] = 0
         response["comment"] = "unknown event"
