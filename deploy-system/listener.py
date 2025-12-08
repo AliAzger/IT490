@@ -117,7 +117,7 @@ def listen_for_rabbit_messages():
         res = requests.get(f"http://{PUBLISHER_IP}:8000/{archive}")
         res.raise_for_status()
         
-        with open(archive, "wb") as f:
+        with open(f"packages/{archive}", "wb") as f:
           f.write(res.content)
         
         # try autodeplying to qa

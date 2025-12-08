@@ -35,7 +35,7 @@ while [ $? -ne 0 ]; do
     ping -w 3 -c 1 $dest_ip
 done
 
-ls | grep "$archive_name"
+ls packages | grep "$archive_name"
 
 if [ $? -ne 0 ]; then
     echo "Cannot find archive ($archive_name)"
@@ -43,7 +43,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # unarchive the package
-tar -xzf "$archive_name"
+tar -xzf "packages/$archive_name"
 
 if [ $? -ne 0 ]; then
     echo "Failed to unarchive"
