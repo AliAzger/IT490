@@ -28,7 +28,7 @@ if [ "$env" == 'prod' ]; then
 fi
 
 # ensure env is up
-ping -w 3 $dest_ip
+ping -w 3 -c 1 $dest_ip
 
 while [ $? -ne 0 ]; do
     sleep 5

@@ -1,0 +1,14 @@
+[Unit]
+Description=Launch deployment server listener
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 listener.py
+Restart=on-failure
+RestartSec=1s
+User=dylan
+WorkingDirectory=/home/dylan/dev/IT490/deploy-system/
+
+[Install]
+WantedBy=multi-user.target
