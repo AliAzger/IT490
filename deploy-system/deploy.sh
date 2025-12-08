@@ -1,5 +1,8 @@
 #!/bin/bash
 
+QA_IP="100.117.191.39" # testing ip
+PROD_IP="prod"
+
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <package_name> <archive_name> <environment: qa | prod>"
     exit 1
@@ -17,11 +20,11 @@ fi
 
 # set IP of env to deploy to
 if [ "$env" == 'qa' ]; then
-    dest_ip="100.117.191.39" # testing ip
+    dest_ip=$QA_IP
 fi
 
 if [ "$env" == 'prod' ]; then
-    dest_ip="prod"
+    dest_ip=$PROD_IP
 fi
 
 # ensure env is up
@@ -29,7 +32,7 @@ ping -w 3 $dest_ip
 
 while [ $? -ne 0 ]; do
     sleep 5
-    ping -w 3 $dest_ip
+    ping -w 3 -c 1 $dest_ip
 done
 
 ls | grep "$archive_name"
