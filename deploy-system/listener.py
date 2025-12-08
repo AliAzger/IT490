@@ -86,6 +86,22 @@ def listen_for_rabbit_messages():
           response["version"] = result[0][2] # 2 means version
         
         response["success"] = 1
+      case "package_version_pass":
+        package = message["package"]
+        
+        query = f"SELECT * FROM deployment WHERE package_name = '{package}' AND pass_flag = 1 ORDER BY version DESC"
+        cursor = MYSQL_DATABASE.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        
+        print(result)
+        
+        if len(result) <= 0:
+          response["version"] = 0
+        else:
+          response["version"] = result[0][2] # 2 means version
+        
+        response["success"] = 1
       case "publish_package":
         package = message["package"]
         version = message["version"]
@@ -142,6 +158,7 @@ def listen_for_rabbit_messages():
         cursor = MYSQL_DATABASE.cursor()
         cursor.execute(query)
         MYSQL_DATABASE.commit()
+        response["success"] = 1
       case _:
         response["success"] = 0
         response["comment"] = "unknown event"

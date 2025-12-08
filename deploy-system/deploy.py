@@ -70,6 +70,23 @@ def get_current_package_version(package_name):
   print("  found version", res["version"])
   return res["version"]
 
+def get_successful_package_version(package_name):
+  print("requesting", package_name, "last successful version")
+  message_body = {
+    "event": "package_version_pass",
+    "package": package_name
+  }
+  message_body_str = json.dumps(message_body)
+  
+  res = send_rabbit_message(message_body_str)
+  
+  if not res["success"]:
+    print(f"Deployment server error getting passed version for package {package_name}")
+    quit()
+  
+  print("  found version", res["version"])
+  return res["version"]
+
 def main():
   global PACKAGE_INFO
   
@@ -102,7 +119,7 @@ def main():
   
   if selected_env.lower() != "qa": quit()
   
-  package_pass = input("Package passed (mark as good)? [y/N]")
+  package_pass = input("Package passed (mark as good)? [y/N] ")
   
   message_body = {
     "event": "pass-fail",
@@ -113,6 +130,21 @@ def main():
   message_body_str = json.dumps(message_body)
   
   send_rabbit_message(message_body_str)
+  
+  if package_pass.lower() != 'y':
+    # need to rollback
+    rollback_version = get_successful_package_version(chosen_package)
+    print("rolling back to version", rollback_version)
+    
+    message_body = {
+      "event": "deploy",
+      "package": chosen_package,
+      "version": rollback_version,
+      "env": selected_env
+    }
+    message_body_str = json.dumps(message_body)
+    
+    send_rabbit_message(message_body_str)
 
 if __name__ == "__main__":
   main()
