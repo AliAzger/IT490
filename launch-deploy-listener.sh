@@ -8,4 +8,4 @@ source ./.venv/bin/activate;
 echo "python venv activated";
 
 cd deploy-system;
-python listener.py;
+python -u listener.py;

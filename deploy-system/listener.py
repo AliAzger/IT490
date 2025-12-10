@@ -89,7 +89,7 @@ def listen_for_rabbit_messages():
       case "package_version_nonfail":
         package = message["package"]
         
-        query = f"SELECT * FROM deployment WHERE package_name = '{package}' AND pass_flag != 0 ORDER BY version DESC"
+        query = f"SELECT * FROM deployment WHERE package_name = '{package}' AND (pass_flag = 1 OR pass_flag IS NULL) ORDER BY version DESC"
         cursor = MYSQL_DATABASE.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
