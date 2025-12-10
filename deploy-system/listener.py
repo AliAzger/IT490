@@ -129,7 +129,7 @@ def listen_for_rabbit_messages():
         archive = None
         
         # get version's archive
-        query = f"SELECT archive FROM deployment WHERE package_name = '{package}' AND version = {version}"
+        query = f"SELECT archive FROM deployment WHERE package_name = '{package}' AND version = {version} AND pass_flag = 1"
         cursor = MYSQL_DATABASE.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
@@ -138,7 +138,7 @@ def listen_for_rabbit_messages():
         
         if len(result) <= 0:
           response["success"] = 0
-          response["comment"] = "version does not exist"
+          response["comment"] = "version does not exist OR marked as fail"
           print("Invalid version to deploy")
         elif len(result) == 1:
           archive = result[0][0]
