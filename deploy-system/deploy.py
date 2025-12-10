@@ -53,10 +53,10 @@ def choose_package():
   
   return selection
 
-def get_current_package_version(package_name):
+def get_current_nonfail_package_version(package_name):
   print("requesting", package_name, "version")
   message_body = {
-    "event": "package_version",
+    "event": "package_version_nonfail",
     "package": package_name
   }
   message_body_str = json.dumps(message_body)
@@ -81,8 +81,8 @@ def get_successful_package_version(package_name):
   res = send_rabbit_message(message_body_str)
   
   if not res["success"]:
-    print(f"Deployment server error getting passed version for package {package_name}")
-    quit()
+    print(f"So successful version for package {package_name}")
+    return None
   
   print("  found version", res["version"])
   return res["version"]
@@ -99,9 +99,9 @@ def main():
   PACKAGE_INFO = load_package_config("package_config.json")
       
   chosen_package = choose_package()
-  version = get_current_package_version(chosen_package)
+  version = get_current_nonfail_package_version(chosen_package)
   
-  selected_version = int(input(f"version to deploy (most recent is {version}): "))
+  selected_version = int(input(f"version to deploy (most recent nonfail is {version}): "))
   selected_env = input(f"environment to deploy to (qa/prod): ")
   if selected_env.lower() not in ["qa", "prod"]:
     print("bad env")
@@ -119,7 +119,7 @@ def main():
   
   if selected_env.lower() != "qa": quit()
   
-  package_pass = input("Package passed (mark as good)? [y/N] ")
+  package_pass = input("Package passed? (mark as good?) [y/N] ")
   
   message_body = {
     "event": "pass-fail",
@@ -134,17 +134,18 @@ def main():
   if package_pass.lower() != 'y':
     # need to rollback
     rollback_version = get_successful_package_version(chosen_package)
-    print("rolling back to version", rollback_version)
-    
-    message_body = {
-      "event": "deploy",
-      "package": chosen_package,
-      "version": rollback_version,
-      "env": selected_env
-    }
-    message_body_str = json.dumps(message_body)
-    
-    send_rabbit_message(message_body_str)
+    if rollback_version:
+      print("rolling back to version", rollback_version)
+      
+      message_body = {
+        "event": "deploy",
+        "package": chosen_package,
+        "version": rollback_version,
+        "env": selected_env
+      }
+      message_body_str = json.dumps(message_body)
+      
+      send_rabbit_message(message_body_str)
 
 if __name__ == "__main__":
   main()

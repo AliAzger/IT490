@@ -86,6 +86,22 @@ def listen_for_rabbit_messages():
           response["version"] = result[0][2] # 2 means version
         
         response["success"] = 1
+      case "package_version_nonfail":
+        package = message["package"]
+        
+        query = f"SELECT * FROM deployment WHERE package_name = '{package}' AND pass_flag != 0 ORDER BY version DESC"
+        cursor = MYSQL_DATABASE.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        
+        print(result)
+        
+        if len(result) <= 0:
+          response["version"] = 0
+        else:
+          response["version"] = result[0][2] # 2 means version
+        
+        response["success"] = 1
       case "package_version_pass":
         package = message["package"]
         
@@ -97,7 +113,8 @@ def listen_for_rabbit_messages():
         print(result)
         
         if len(result) <= 0:
-          response["version"] = 0
+          response["success"] = 0
+          response["comment"] = "no passing packages"
         else:
           response["version"] = result[0][2] # 2 means version
         
