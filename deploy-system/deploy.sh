@@ -1,6 +1,7 @@
 #!/bin/bash
 
-QA_IP="100.117.191.39" # testing ip
+# QA_IP="100.117.191.39" # testing ip
+QA_IP="172.25.230.9" # QA ip
 PROD_IP="prod"
 
 if [ "$#" -ne 3 ]; then

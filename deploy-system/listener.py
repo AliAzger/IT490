@@ -9,13 +9,13 @@ import requests
 import subprocess
 
 # constants/config
-RABBITMQ_IP = "100.93.74.30" # my testing ip
-# RABBITMQ_IP = "172.25.28.168"
+# RABBITMQ_IP = "100.93.74.30" # my testing ip
+RABBITMQ_IP = "172.25.28.168"
 
 DATABASE_IP = "127.0.0.1" # my testing ip
-# DATABASE_IP = "172.25.199.66"
 
-PUBLISHER_IP = "100.97.33.42" # my testing ip
+# PUBLISHER_IP = "100.97.33.42" # my testing ip
+PUBLISHER_IP = "172.25.199.66" # dev webserver ip
 
 # globals
 RABBITMQ_CHANNEL = None
