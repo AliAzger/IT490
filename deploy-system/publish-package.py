@@ -121,7 +121,7 @@ def main():
   publish_package(chosen_package, version, archive)
   
   os.chdir("packages")
-  subprocess.run(['python', '-m', 'http.server'])
+  subprocess.run(['python3', '-m', 'http.server'])
 
 if __name__ == "__main__":
   main()
