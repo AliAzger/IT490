@@ -44,7 +44,7 @@
         "website_watchlist": {
             "files": {
                 "webserver": [
-                    "watchlist.php"
+                    "watchlisttest.php"
                 ]
             }
         },
@@ -75,7 +75,7 @@
             "files": {
                 "webserver": [
                     "accounttest.php",
-                    "test_notifications.php"
+                    "test_notifcations.php"
                 ]
             }
         }
