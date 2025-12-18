@@ -1,8 +1,8 @@
 <?php
-require_once('rabbitMQLib.inc');
+require_once('rabbitMQLib.php');
 require_once('logger.php');
 
-$server = new rabbitMQServer("testRabbitMQ.ini", "errorQueue");
+$server = new rabbitMQServer("testRabbitMQ.php", "errorQueue");
 echo "RabbitMQ Log Listener started...\n";
 
 $server->process_requests(function($request) {

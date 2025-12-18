@@ -1,5 +1,5 @@
 <?php
-require_once('rabbitMQLib.inc');
+require_once('rabbitMQLib.php');
 require_once('logger.php');
 require_once('UserStore.php');
 require_once('vendor/autoload.php');
