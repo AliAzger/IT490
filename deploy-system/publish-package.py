@@ -114,6 +114,8 @@ def main():
   
   PACKAGE_INFO = load_package_config("package_config.json")
 
+  os.makedirs("packages", exist_ok=True)
+
   chosen_package = choose_package()
   version = get_current_package_version(chosen_package) + 1
   archive = create_package_archive(chosen_package, version)

@@ -146,7 +146,7 @@ def listen_for_rabbit_messages():
         archive = None
         
         # get version's archive
-        query = f"SELECT archive FROM deployment WHERE package_name = '{package}' AND version = {version} AND pass_flag = 1"
+        query = f"SELECT archive FROM deployment WHERE package_name = '{package}' AND version = {version} AND (pass_flag = 1 OR pass_flag IS NULL)"
         cursor = MYSQL_DATABASE.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
