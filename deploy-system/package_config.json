@@ -2,9 +2,9 @@
     "packages": {
         "data_utils": {
             "files": {
-                "dmz": [
+                "webserver": [
                     "database.php",
-                    "ticketmasterapi.php",
+                    "ticketmaster_api.php",
                     "config.php"
                 ]
             }

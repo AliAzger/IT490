@@ -6,7 +6,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-$rabbitHost = '172.25.28.168';
+$rabbitHost = getenv("RABBITMQ_IP");
 $rabbitPort = 5672;
 $rabbitUser = 'test';
 $rabbitPassword = 'test';
@@ -54,4 +54,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
-

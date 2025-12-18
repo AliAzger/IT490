@@ -14,7 +14,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-$rabbitHost = '172.25.28.168';
+$rabbitHost = getenv("RABBITMQ_IP");
 $rabbitPort = 5672;
 $rabbitUser = 'test';
 $rabbitPassword = 'test';
@@ -33,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($check->num_rows > 0) {
         $conn->query("UPDATE account SET full_name='$name' WHERE email='$email'");
         $message = "Account updated ";
-	$action = 'update';
+        $action = 'update';
 
     } else {
-	        
-	$conn->query("INSERT INTO account (full_name, email) VALUES ('$name', '$email')");
+
+        $conn->query("INSERT INTO account (full_name, email) VALUES ('$name', '$email')");
         $message = "Account created ";
         $action = 'create';
     }
@@ -68,55 +68,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Account</title>
     <style>
-        body { 
-			font-family: Arial; 
-			margin: 20px; 
-		}
-        form { max-width: 400px; 
-			  margin: auto; 
-			 }
-        label { display: block; 
-			   margin-top: 10px; 
-			  }
-        input[type="text"], input[type="email"] { 
-			width: 100%; 
-			padding: 8px; 
-			margin-top: 5px; 
-		}
-        input[type="submit"] { 
-			margin-top: 15px; 
-			padding: 8px 12px; 
-			cursor: pointer; 
-		}
-        .message { 
-			margin-top: 15px; 
-			color: green; 
-			text-align: center; 
-		}
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        input[type="submit"] {
+            margin-top: 15px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-top: 15px;
+            color: green;
+            text-align: center;
+        }
     </style>
 </head>
+
 <body>
 
-<?php include('header.php'); ?>
+    <?php include('header.php'); ?>
 
-<h1> </h1>
+    <h1> </h1>
 
-<form method="post" action="">
-    <label for="full_name">Full Name:</label>
-    <input type="text" name="full_name" id="full_name" required>
+    <form method="post" action="">
+        <label for="full_name">Full Name:</label>
+        <input type="text" name="full_name" id="full_name" required>
 
-    <label for="email">Email:</label>
-    <input type="email" name="email" id="email" required>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
 
-    <input type="submit" value="Save">
-</form>
+        <input type="submit" value="Save">
+    </form>
 
-<?php if ($message) echo "<p class='message'>$message</p>"; ?>
+    <?php if ($message)
+        echo "<p class='message'>$message</p>"; ?>
 
 </body>
-</html>
 
+</html>
