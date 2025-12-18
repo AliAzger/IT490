@@ -6,7 +6,7 @@ import pika
 
 # constants/config
 # RABBITMQ_IP = "100.93.74.30" # my testing ip
-RABBITMQ_IP = "172.25.28.168"
+RABBITMQ_IP = "172.25.28.168" # dev rabbit, since deploying from dev env
 
 # globals
 PACKAGE_INFO = None

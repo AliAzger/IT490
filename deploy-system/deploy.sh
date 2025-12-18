@@ -1,7 +1,7 @@
 #!/bin/bash
 
 QA_IP="192.168.193.176" # QA ip
-PROD_IP="prod"
+PROD_IP="10.144.230.9" # Prod IP
 
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <package_name> <archive_name> <environment: qa | prod>"

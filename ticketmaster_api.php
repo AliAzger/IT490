@@ -2,12 +2,17 @@
 
 include 'config.php';
 
-function getTicketmasterEvents($keyword = '', $city = '') {
+function getTicketmasterEvents($keyword = '', $city = '')
+{
     global $TICKETMASTER_API_KEY;
 
-    $url = "https://app.ticketmaster.com/discovery/v2/events.json?";
-    if ($keyword !== '') $url .= "keyword=" . urlencode($keyword) . "&";
-    if ($city !== '') $url .= "city=" . urlencode($city) . "&";
+    $dmz = getenv("DMZ_IP");
+    $url = "http://" . $dmz . "/tm_proxy.php?";
+
+    if ($keyword !== '')
+        $url .= "keyword=" . urlencode($keyword) . "&";
+    if ($city !== '')
+        $url .= "city=" . urlencode($city) . "&";
     $url .= "apikey=" . $TICKETMASTER_API_KEY;
 
     $ch = curl_init();
