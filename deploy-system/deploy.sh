@@ -1,6 +1,6 @@
 #!/bin/bash
 
-QA_IP="192.168.193.176" # QA ip
+QA_IP="192.168.193.123" # QA ip
 PROD_IP="10.144.230.9" # Prod IP
 
 if [ "$#" -ne 3 ]; then
