@@ -1,0 +1,17 @@
+- dec 19 final exam time is deadline for submitting
+    - BEFORE class
+- troubleshooting network time in class, nothing else
+- changelog is
+    - everything we've done this semester
+    - server documentation
+        - every VM has a doc
+        - everything you need to set up a new VM to do the same things
+        - how is the VM set up
+        - versions, installed packages, set up code, etc
+    - github link/branch name
+    - change management platform output (jira, github issues, whatever)
+        - who did what and when
+        - should be throughout the semester
+    - relavent chat logs as proof of doing work
+- also submit everything before presentation
+    - exercises etc

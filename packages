@@ -1,0 +1,46 @@
+package : sql and api, do not need to touch anymore
+database.php
+ticketmaster_api.php
+config.php
+
+package :
+index.html
+login.php
+
+package :
+register.html
+register.php
+
+package :
+hometest.php
+home.html
+header.php
+header.css
+
+package :
+watchlist.php
+header.php
+header.css
+
+package :
+reviewtest.php
+header.php
+header.css
+
+package :
+recommendationstest.php
+header.php
+header.css
+
+package : all of the group files are seperate pages
+grouptest.php
+group_events.php
+group_members.php
+header.php
+header.css
+
+package :
+accounttest.php
+header.php
+header.css
+test_notifcations.php

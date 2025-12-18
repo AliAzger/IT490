@@ -6,13 +6,13 @@ if (!isset($_SESSION['username'])) {
 }
 
 include 'ticketmaster_api.php';
-include 'database.php'; 
+include 'database.php';
 
 require_once __DIR__ . '/vendor/autoload.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-$rabbitHost = '172.25.28.168';
+$rabbitHost = getenv("RABBITMQ_IP");
 $rabbitPort = 5672;
 $rabbitUser = 'test';
 $rabbitPassword = 'test';
@@ -27,35 +27,35 @@ $events = getTicketmasterEvents($keyword, $city);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['selected_events'])) {
     $user_id = $_SESSION['user_id'] ?? 1;
 
-    $savedCount = 0; 
+    $savedCount = 0;
 
     foreach ($_POST['selected_events'] as $selected_id) {
 
-	    foreach ($events as $event) {
-	        if ($event['id'] === $selected_id) {
-		       
-			$event_id = $conn->real_escape_string($event['id']);
-			
-			$event_name = $conn->real_escape_string($event['name']);
-	
-			$date_time = $conn->real_escape_string(($event['dates']['start']['localDate'] ?? '')
-		
-				. ' ' . ($event['dates']['start']['localTime'] ?? ''));
-		       
-			$venue = $conn->real_escape_string($event['_embedded']['venues'][0]['name'] ?? 'N/A');
-		       
-			$city = $conn->real_escape_string($event['_embedded']['venues'][0]['city']['name'] ?? '');
-		       
-			$url = $conn->real_escape_string($event['url']);
+        foreach ($events as $event) {
+            if ($event['id'] === $selected_id) {
 
-			
-			$check = $conn->query("SELECT * FROM saved_events WHERE event_id = '$event_id' AND user_id = $user_id");
-		   
-			if ($check->num_rows === 0) {
-		   
-		
-		
-			$sql = "INSERT INTO saved_events (event_id, event_name, date_time, venue, url, city, user_id)
+                $event_id = $conn->real_escape_string($event['id']);
+
+                $event_name = $conn->real_escape_string($event['name']);
+
+                $date_time = $conn->real_escape_string(($event['dates']['start']['localDate'] ?? '')
+
+                    . ' ' . ($event['dates']['start']['localTime'] ?? ''));
+
+                $venue = $conn->real_escape_string($event['_embedded']['venues'][0]['name'] ?? 'N/A');
+
+                $city = $conn->real_escape_string($event['_embedded']['venues'][0]['city']['name'] ?? '');
+
+                $url = $conn->real_escape_string($event['url']);
+
+
+                $check = $conn->query("SELECT * FROM saved_events WHERE event_id = '$event_id' AND user_id = $user_id");
+
+                if ($check->num_rows === 0) {
+
+
+
+                    $sql = "INSERT INTO saved_events (event_id, event_name, date_time, venue, url, city, user_id)
                             VALUES ('$event_id', '$event_name', '$date_time', '$venue', '$url', '$city', $user_id)";
                     if ($conn->query($sql)) {
                         $savedCount++;
@@ -97,72 +97,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['selected_events'])) 
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title></title>
     <style>
-        body { 
-			font-family: 
-				Arial; 
-			margin: 20px; 
-		}
-        .event { 
-			border: 1px 
-				solid #ccc; 
-			padding: 15px; 
-			margin-bottom: 10px; 
-			border-radius: 5px;
-		}
-        .event h2 { 
-			margin-top: 0; }
-        .event-actions { 
-			display: flex; 
-			align-items: center; 
-			gap: 8px; 
-		}
-        .searchform { 
-			margin-bottom: 20px;
-		}
+        body {
+            font-family:
+                Arial;
+            margin: 20px;
+        }
+
+        .event {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .event h2 {
+            margin-top: 0;
+        }
+
+        .event-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .searchform {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
+
 <body>
-<?php include('header.php'); ?>
+    <?php include('header.php'); ?>
 
-<div class="searchform">
-    <form method="get">
-        <input type="text" name="keyword" placeholder="Keyword" value="<?= ($keyword) ?>">
-        <input type="text" name="city" placeholder="City" value="<?= ($city) ?>">
-        <button type="submit">Search</button>
-    </form>
-</div>
-
-<form method="post" action="">
-    <div class="results">
-        <?php
-        if (!empty($events)) {
-            foreach ($events as $event) {
-                $venue = $event['_embedded']['venues'][0]['name'] ?? 'N/A';
-                $address = $event['_embedded']['venues'][0]['address']['line1'] ?? '';
-
-                echo "<div class='event'>";
-                echo "<h2>" . ($event['name']) . "</h2>";
-                echo "<p><strong>Date:</strong> " . (($event['dates']['start']['localDate'] ?? '') . ' ' . ($event['dates']['start']['localTime'] ?? '')) . "</p>";
-                echo "<p><strong>Venue:</strong> " . ($venue . ' ' . $address) . "</p>";
-
-                echo "<div class='event-actions'>";
-                echo "<a href='" . ($event['url']) . "' target='_blank'>View Event</a>";
-                echo "<input type='checkbox' name='selected_events[]' value='" . ($event['id']) . "'>";
-                echo "</div>";
-
-                echo "</div>";
-            }
-        } else {
-            echo "<p>No events found.</p>";
-        }
-        ?>
+    <div class="searchform">
+        <form method="get">
+            <input type="text" name="keyword" placeholder="Keyword" value="<?= ($keyword) ?>">
+            <input type="text" name="city" placeholder="City" value="<?= ($city) ?>">
+            <button type="submit">Search</button>
+        </form>
     </div>
-    <input type="submit" value="Save Selected Events">
-</form>
+
+    <form method="post" action="">
+        <div class="results">
+            <?php
+            if (!empty($events)) {
+                foreach ($events as $event) {
+                    $venue = $event['_embedded']['venues'][0]['name'] ?? 'N/A';
+                    $address = $event['_embedded']['venues'][0]['address']['line1'] ?? '';
+
+                    echo "<div class='event'>";
+                    echo "<h2>" . ($event['name']) . "</h2>";
+                    echo "<p><strong>Date:</strong> " . (($event['dates']['start']['localDate'] ?? '') . ' ' . ($event['dates']['start']['localTime'] ?? '')) . "</p>";
+                    echo "<p><strong>Venue:</strong> " . ($venue . ' ' . $address) . "</p>";
+
+                    echo "<div class='event-actions'>";
+                    echo "<a href='" . ($event['url']) . "' target='_blank'>View Event</a>";
+                    echo "<input type='checkbox' name='selected_events[]' value='" . ($event['id']) . "'>";
+                    echo "</div>";
+
+                    echo "</div>";
+                }
+            } else {
+                echo "<p>No events found.</p>";
+            }
+            ?>
+        </div>
+        <input type="submit" value="Save Selected Events">
+    </form>
 
 </body>
+
 </html>
