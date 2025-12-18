@@ -1,0 +1,7 @@
+{
+    "name": "your-project/name",
+    "description": "A description of your project",
+    "require": {
+        "php": ">=7.4"
+    }
+}
