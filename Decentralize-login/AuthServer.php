@@ -39,3 +39,4 @@ $server->process_requests(function($request) use ($secretKey) {
         return ["status" => "error", "message" => $e->getMessage()];
     }
 });
+?>

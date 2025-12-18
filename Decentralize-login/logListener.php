@@ -13,3 +13,4 @@ $server->process_requests(function($request) {
     echo "[" . date("Y-m-d H:i:s") . "] " . $msg . "\n";
     return ["status" => "logged"];
 });
+?>

@@ -1,6 +1,6 @@
 <?php
 // AuthClient.php
-require_once('rabbitMQLib.php'); // Updated extension
+require_once('rabbitMQLib.php');
 require_once('logger.php');
 
 if ($argc < 4) {
@@ -27,3 +27,4 @@ try {
     logAllErrors("Client error: " . $e->getMessage());
     echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 }
+?>

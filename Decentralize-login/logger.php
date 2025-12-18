@@ -1,26 +1,35 @@
 <?php
 // logger.php
 
-function logResult($message, $file) {
-    $timestamp = date("Y-m-d H:i:s");
-    file_put_contents($file, "[$timestamp] $message\n", FILE_APPEND);
-}
-
+/**
+ * Log general messages to a file
+ */
 function logAll($message) {
-    $logs = ["frontend.log", "dmz.log", "backend.log", "apache.log"];
-    foreach ($logs as $logFile) {
-        logResult($message, $logFile);
+    $logFile = __DIR__ . '/logs/app.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $logMessage = "[$timestamp] $message\n";
+    
+    // Create logs directory if it doesn't exist
+    if (!file_exists(__DIR__ . '/logs')) {
+        mkdir(__DIR__ . '/logs', 0755, true);
     }
+    
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
 }
 
-function logError($message, $file = "error.log") {
-    $timestamp = date("Y-m-d H:i:s");
-    file_put_contents($file, "[$timestamp] ERROR: $message\n", FILE_APPEND);
-}
-
+/**
+ * Log error messages to a separate file
+ */
 function logAllErrors($message) {
-    $logs = ["frontend.log", "dmz.log", "backend.log", "apache.log", "error.log"];
-    foreach ($logs as $logFile) {
-        logError($message, $logFile);
+    $logFile = __DIR__ . '/logs/errors.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $logMessage = "[$timestamp] ERROR: $message\n";
+    
+    // Create logs directory if it doesn't exist
+    if (!file_exists(__DIR__ . '/logs')) {
+        mkdir(__DIR__ . '/logs', 0755, true);
     }
+    
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
 }
+?>
