@@ -1,5 +1,5 @@
 <?php
-require_once('rabbitMQLib.php');
+require_once('rabbitMQLib.ini');
 require_once('logger.php');
 
 $server = new rabbitMQServer("testRabbitMQ.php", "errorQueue");

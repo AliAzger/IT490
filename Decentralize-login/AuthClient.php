@@ -1,5 +1,5 @@
 <?php
-require_once('rabbitMQLib.php');
+require_once('rabbitMQLib.ini');
 require_once('logger.php');
 
 if ($argc < 4) {
@@ -13,7 +13,7 @@ $password = $argv[3];
 $exchangeType = $argv[4] ?? 'direct';
 
 try {
-    $client = new rabbitMQClient("testRabbitMQ.php", "testServer");
+    $client = new rabbitMQClient("host.ini", "testServer");
     $request = [
         "type" => $type,
         "username" => $username,
