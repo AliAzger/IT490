@@ -10,12 +10,12 @@ import subprocess
 
 # constants/config
 # RABBITMQ_IP = "100.93.74.30" # my testing ip
-RABBITMQ_IP = "172.25.28.168"
+RABBITMQ_IP = "172.25.28.168" # dev rabbit, since deploying from dev env
 
-DATABASE_IP = "127.0.0.1" # my testing ip
+DATABASE_IP = "127.0.0.1" # localhost db!
 
-# PUBLISHER_IP = "100.97.33.42" # my testing ip
-PUBLISHER_IP = "172.25.199.66" # dev webserver ip
+# PUBLISHER_IP = "172.25.85.250" # my testing ip
+PUBLISHER_IP = "172.25.199.66" # dev webserver ip, where we're deploying from
 
 # globals
 RABBITMQ_CHANNEL = None
