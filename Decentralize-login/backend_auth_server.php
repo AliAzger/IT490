@@ -1,11 +1,11 @@
 <?php
+
 require __DIR__ . '/vendor/autoload.php';
 $config = require __DIR__ . '/config.php';
+require __DIR__ . '/lib/Logger.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
-
-require __DIR__ . '/lib/Logger.php';
 
 $svc = "backend";
 $logFile = __DIR__ . "/logs/backend.log";
@@ -17,38 +17,37 @@ $conn = new AMQPStreamConnection(
   $config['rabbit']['pass'],
   $config['rabbit']['vhost']
 );
+
 $ch = $conn->channel();
+$ch->exchange_declare(
+  $config['rabbit']['exchange'],
+  $config['rabbit']['exchange_type'],
+  false,
+  true,
+  false
+);
 
-$exchange = $config['rabbit']['exchange'];
-$exchangeType = $config['rabbit']['exchange_type'];
-$ch->exchange_declare($exchange, $exchangeType, false, true, false);
-
-$logger = new LoggerX($logFile, $ch, $exchange);
+$logger = new LoggerX($logFile, $ch, $config['rabbit']['exchange']);
 
 $ch->queue_declare("auth.request", false, true, false, false);
-$ch->queue_bind("auth.request", $exchange, "auth.request");
+$ch->queue_bind("auth.request", $config['rabbit']['exchange'], "auth.request");
 
 $logger->log("info", $svc, "Backend auth server started");
 
-function checkCredentials(string $u, string $p): bool {
-  // TODO: Replace with DB lookup (password_verify against hashed passwords)
-  // Example stub:
+function checkCredentials(string $u, string $p): bool
+{
   return ($u === "test" && $p === "pass123");
 }
 
-$callback = function($req) use ($ch, $logger, $svc) {
+$callback = function ($req) use ($ch, $logger, $svc) {
+
   $body = json_decode($req->body, true);
   $u = $body['username'] ?? '';
   $p = $body['password'] ?? '';
 
-  $logger->log("info", $svc, "Login request received", ['username' => $u]);
+  $logger->log("info", $svc, "Login request received", ['user' => $u]);
 
-  $ok = false;
-  try {
-    $ok = checkCredentials($u, $p);
-  } catch (Throwable $e) {
-    $logger->log("error", $svc, "Auth check crashed", ['err' => $e->getMessage()]);
-  }
+  $ok = checkCredentials($u, $p);
 
   $resp = [
     'ok' => $ok,
@@ -62,11 +61,8 @@ $callback = function($req) use ($ch, $logger, $svc) {
     'correlation_id' => $req->get('correlation_id')
   ]);
 
-  $replyTo = $req->get('reply_to');
-  $ch->basic_publish($msg, '', $replyTo);
-
-  $logger->log($ok ? "info" : "warning", $svc, "Login processed", ['ok' => $ok]);
-  $ch->basic_ack($req->getDeliveryTag());
+  $ch->basic_publish($msg, '', $req->get('reply_to'));
+  $req->ack();
 };
 
 $ch->basic_qos(null, 1, null);
@@ -75,3 +71,4 @@ $ch->basic_consume("auth.request", '', false, false, false, false, $callback);
 while ($ch->is_consuming()) {
   $ch->wait();
 }
+
