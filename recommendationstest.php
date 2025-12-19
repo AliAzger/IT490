@@ -4,6 +4,7 @@ if (!isset($_SESSION['username'])) {
     header("Location: index.html");
     exit();
 }
+require_once 'generate_recommendations.php';
 
 
 include 'database.php';
@@ -11,7 +12,7 @@ include 'database.php';
 $recommendations = $conn->query("
     SELECT * FROM all_events
     WHERE venue IN (
-        SELECT DISTINCT venue FROM attended_events
+        SELECT DISTINCT venue FROM saved_events
     )
     AND event_id NOT IN (SELECT event_id FROM saved_events)
     AND event_id NOT IN (SELECT event_id FROM attended_events)
