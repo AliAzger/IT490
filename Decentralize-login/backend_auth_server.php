@@ -26,7 +26,7 @@ $ch->exchange_declare(
   true,
   false
 );
-
+//
 $logger = new LoggerX($logFile, $ch, $config['rabbit']['exchange']);
 
 $ch->queue_declare("auth.request", false, true, false, false);

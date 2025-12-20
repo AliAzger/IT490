@@ -1,2 +1,10 @@
 {"ts":1766147097,"level":"info","service":"backend","message":"Backend auth server started","context":[]}
 {"ts":1766147170,"level":"info","service":"backend","message":"Backend auth server started","context":[]}
+{"ts":1766213878,"level":"info","service":"backend","message":"Backend auth server started","context":[]}
+{"ts":1766214172,"level":"info","service":"backend","message":"Backend auth server started","context":[]}
+{"ts":1766214585,"level":"info","service":"backend","message":"Backend auth server started","context":[]}
+{"ts":1766214585,"level":"info","service":"backend","message":"Login request received","context":{"user":"it490"}}
+{"ts":1766214585,"level":"info","service":"backend","message":"Login request received","context":{"user":"it490"}}
+{"ts":1766214585,"level":"info","service":"backend","message":"Login request received","context":{"user":"it490"}}
+{"ts":1766215168,"level":"info","service":"backend","message":"Backend auth server started","context":[]}
+{"ts":1766215531,"level":"info","service":"backend","message":"Backend auth server started","context":[]}
